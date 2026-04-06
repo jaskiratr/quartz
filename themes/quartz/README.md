@@ -1,1 +1,0 @@
-Hexo Theme modified from [Hacker](http://blog.daraw.cn/)
