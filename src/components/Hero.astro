@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/images/intro.jpg';
+---
+
+<section class="relative flex min-h-dvh items-center justify-center overflow-hidden">
+  <Image
+    src={heroImage}
+    alt="Glass extrusion in progress"
+    class="absolute inset-0 h-full w-full object-cover"
+    widths={[640, 1024, 1440, 1920]}
+    sizes="100vw"
+  />
+  <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[var(--color-bg)]"></div>
+  <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
+    <h1 class="text-5xl font-bold tracking-widest sm:text-7xl">QUARTZ</h1>
+    <p class="mt-4 text-lg text-[var(--color-text-muted)] sm:text-xl">
+      Machine Driven Glass Fabrication
+    </p>
+    <p class="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)]">
+      A material research project uniting computer-aided rapid prototyping technology with glass — one of the most versatile design materials.
+    </p>
+    <a
+      href="/quartz/docs/01-introduction"
+      class="mt-10 inline-block rounded-md bg-[var(--color-accent)] px-8 py-3 text-sm font-semibold text-[var(--color-bg)] transition-colors hover:bg-[var(--color-accent-hover)]"
+    >
+      Get Started
+    </a>
+  </div>
+</section>
