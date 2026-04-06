@@ -1,12 +1,10 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>QUARTZ</title>
-  </head>
-  <body>
-    <h1>Quartz</h1>
-  </body>
-</html>
+
+<BaseLayout title="Home">
+  <div class="mx-auto max-w-6xl px-6 py-16">
+    <h1 class="text-4xl font-bold">QUARTZ</h1>
+    <p class="mt-4 text-[var(--color-text-muted)]">Machine Driven Glass Fabrication</p>
+  </div>
+</BaseLayout>
