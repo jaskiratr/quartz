@@ -1,0 +1,52 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentId: string;
+}
+
+const { title, description, currentId } = Astro.props;
+
+const docs = await getCollection('docs');
+const sorted = docs.sort((a, b) => a.data.order - b.data.order);
+const currentIndex = sorted.findIndex((d) => d.id === currentId);
+const prev = currentIndex > 0 ? sorted[currentIndex - 1] : null;
+const next = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="mx-auto flex max-w-6xl gap-10 px-6 py-10">
+    <Sidebar currentId={currentId} />
+    <article class="min-w-0 flex-1">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight">{title}</h1>
+      </header>
+      <div class="prose prose-invert prose-lg max-w-none
+        prose-headings:font-semibold prose-headings:tracking-tight
+        prose-a:text-[var(--color-accent)] prose-a:no-underline hover:prose-a:underline
+        prose-img:rounded-lg
+        prose-hr:border-[var(--color-border)]
+        prose-strong:text-[var(--color-text)]">
+        <slot />
+      </div>
+      <nav class="mt-16 flex items-center justify-between border-t border-[var(--color-border)] pt-8">
+        {prev ? (
+          <a href={`/quartz/docs/${prev.id}`} class="group flex flex-col">
+            <span class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Previous</span>
+            <span class="text-sm font-medium text-[var(--color-accent)] group-hover:underline">{prev.data.title}</span>
+          </a>
+        ) : <div />}
+        {next ? (
+          <a href={`/quartz/docs/${next.id}`} class="group flex flex-col items-end">
+            <span class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Next</span>
+            <span class="text-sm font-medium text-[var(--color-accent)] group-hover:underline">{next.data.title}</span>
+          </a>
+        ) : <div />}
+      </nav>
+    </article>
+  </div>
+</BaseLayout>
