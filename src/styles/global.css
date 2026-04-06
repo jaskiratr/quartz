@@ -2,14 +2,15 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  --color-bg: #0a0a0a;
-  --color-bg-surface: #141414;
-  --color-bg-elevated: #1e1e1e;
-  --color-text: #f5f5f5;
-  --color-text-muted: #a0a0a0;
-  --color-accent: #e8872a;
-  --color-accent-hover: #f09a40;
-  --color-border: #2a2a2a;
+  --color-bg: #f5f1eb;
+  --color-bg-surface: #ece7df;
+  --color-bg-elevated: #e3ddd4;
+  --color-text: #2c2c2c;
+  --color-text-muted: #6b6b6b;
+  --color-accent: #3d5a96;
+  --color-accent-hover: #2e4777;
+  --color-accent-light: #eef1f7;
+  --color-border: #d4cfc7;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -26,7 +27,42 @@ body {
 
 ::selection {
   background-color: var(--color-accent);
-  color: var(--color-bg);
+  color: #fff;
+}
+
+/* Responsive embed container for iframes (Vimeo, Sketchfab) */
+/* Code blocks */
+pre {
+  background-color: #fff !important;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem !important;
+  overflow-x: auto;
+  font-size: 0.875rem !important;
+  line-height: 1.7 !important;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  counter-reset: line;
+}
+
+pre code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2.5rem;
+  margin-right: 1rem;
+  text-align: right;
+  color: #b0aca5;
+  font-size: 0.8em;
+}
+
+:not(pre) > code {
+  background-color: #eee9e1;
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
 }
 
 /* Responsive embed container for iframes (Vimeo, Sketchfab) */

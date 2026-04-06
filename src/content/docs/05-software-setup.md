@@ -61,4 +61,71 @@ description: Software requirements and workflow for generating and running G-Cod
 - [TinyG G-Code Generator](https://github.com/timcastelijn/gcode-generator)
 - [Modified G-Code Generator](https://gist.github.com/jaskiratr/9baad314e0218bfb0174f3a6bb7eccc1#file-quartz-rhino-python-script-py)
 
-<script src="https://gist.github.com/jaskiratr/9baad314e0218bfb0174f3a6bb7eccc1.js"></script>
+```python
+# Modified from : https://github.com/timcastelijn/gcode-generator
+feedrate= 85   # Carriage Speed | Increment by +- 5
+curve_tolerance=0.008
+curve_angle_tolerance=5
+z_offset = 0
+material_mult = 0.01 # Extrusion Speed: A-Axis | Increments of +- 0.001
+extruder_axis = 0  # Rotation A-Axis
+
+import rhinoscriptsyntax as rs
+import math
+
+pt_prev = [0,0,0]
+path = rs.GetObjects("Select Curves/polylines/arcs/circles", rs.filter.curve, True, True)
+filename = rs.SaveFileName ("Save", "Toolpath Files (*.nc)|*.nc||", "/users/timcastelijn/documents")
+
+file = open(filename, 'w')
+
+# write header
+file.write("G21\n") # Measurement units to mm
+file.write("G90\n") # absolute positioning
+
+for curve in path:
+    # fast move to path start
+    pt = rs.CurveStartPoint(curve)
+    file.write("G00 X%0.4f"%pt.X+" Y%0.4f"%pt.Y+" F%0.4f"%feedrate+"\n")
+
+    # detect type of curve for different G-codes
+    if (rs.IsPolyline(curve)) or rs.IsLine(curve):
+        points = rs.CurvePoints(curve)
+        for pt in points:
+            dist = rs.Distance(pt_prev,pt)
+            pt_prev[0] = pt.X
+            pt_prev[1] = pt.Y
+            pt_prev[2] = pt.Z
+            extruder_axis += dist*material_mult
+            file.write("G1 X%0.4f"%pt.X+" Y%0.4f"%pt.Y+" Z%0.4f"%(pt.Z+z_offset)+" A%0.4f"%(extruder_axis)+"\n")
+
+    elif rs.IsArc(curve):
+        normal = rs.CurveTangent(curve, 0)
+        startpt = rs.CurveStartPoint(curve)
+        endpt = rs.CurveEndPoint(curve)
+        midpt = rs.ArcCenterPoint(curve)
+
+        x = endpt.X
+        y = endpt.Y
+        i = -startpt.X + midpt.X
+        j = -startpt.Y + midpt.Y
+
+        if ((normal[1] > 0) and (startpt.X > midpt.X)) or ((normal[1] < 0) and (startpt.X < midpt.X) or (normal[1]==0 and (normal[0]==1 or normal[0] ==-1) and startpt.X == midpt.X)):
+            file.write("G3 X%0.4f"%x+" Y%0.4f"%y+" I%0.4f"%i+" J%0.4f"%j +"\n")
+        else:
+            file.write("G2 X%0.4f"%x+" Y%0.4f"%y+" I%0.4f"%i+" J%0.4f"%j +"\n")
+
+    else:
+        print "curve detected, subdiv needed"
+        polyLine = rs.ConvertCurveToPolyline(curve, curve_angle_tolerance, curve_tolerance)
+        points = rs.CurvePoints(polyLine)
+        for pt in points:
+            file.write("G01 X%0.4f"%pt.X+" Y%0.4f"%pt.Y+" Z%0.4f"%(pt.Z+z_offset)+"\n")
+            pt_prev[0] = pt.X
+            pt_prev[1] = pt.Y
+            pt_prev[2] = pt.Z
+            dist = rs.Distance(pt_prev,pt)
+        rs.DeleteObjects(polyLine)
+
+file.close()
+```
